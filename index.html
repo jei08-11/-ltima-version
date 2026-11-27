@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#090b12">
+  <meta name="description" content="JEI ESTIRAR - vista previa de proporciones de pantalla.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <title>JEI ESTIRAR</title>
+  <style>
+    :root { color-scheme: dark; --bg:#090b12; --panel:#141925; --line:#273247; --blue:#55a6ff; --muted:#a8b2c5; }
+    * { box-sizing:border-box }
+    body { margin:0; min-height:100vh; padding:22px 16px 34px; color:#f5f7fb; background:radial-gradient(ellipse at top,#18243a 0,#090b12 58%); font-family:system-ui,-apple-system,Segoe UI,sans-serif; }
+    main { max-width:560px; margin:auto }
+    header { text-align:center; padding:12px 0 20px }
+    .logo { width:64px;height:64px;margin:0 auto 12px;border-radius:20px;background:linear-gradient(145deg,#2488ff,#744dff);display:grid;place-items:center;font-weight:900;font-size:25px;box-shadow:0 8px 35px #287dff44 }
+    h1 { margin:0;font-size:27px;letter-spacing:1.5px }
+    .sub { color:var(--muted);margin:6px 0 0;font-size:14px }
+    .card { background:#141925eF;border:1px solid var(--line);border-radius:20px;padding:18px;margin:14px 0;box-shadow:0 12px 35px #0003 }
+    h2 { margin:0 0 12px;font-size:17px }
+    .preview-wrap { min-height:260px;display:grid;place-items:center;background:#080b12;border:1px solid #202a3b;border-radius:14px;padding:16px;overflow:hidden }
+    #preview { width:min(100%,300px);height:190px;border:2px solid var(--blue);border-radius:12px;background:linear-gradient(135deg,#13233a,#1b1538);display:grid;place-items:center;text-align:center;padding:12px;transition:width .2s,height .2s;box-shadow:0 0 24px #3c8eff22 }
+    #preview strong { font-size:19px }
+    #preview small { color:#c3d5ee;display:block;margin-top:5px }
+    .control { display:flex;justify-content:space-between;gap:12px;align-items:center;margin:15px 0 8px }
+    output { color:#8dc5ff;font-weight:700 }
+    input[type=range] { width:100%;accent-color:var(--blue) }
+    .presets { display:flex;gap:8px;flex-wrap:wrap;margin-top:12px }
+    button { border:1px solid #34435b;border-radius:12px;padding:11px 14px;background:#1b2638;color:#f5f7fb;font-weight:650;font-size:14px;cursor:pointer }
+    button:active { transform:scale(.98) }
+    button.primary { background:linear-gradient(100deg,#247de5,#684fe5);border:0 }
+    .actions { display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px }
+    .note { color:var(--muted);font-size:13px;line-height:1.55 }
+    .steps { padding-left:20px;color:#d9e1ee;line-height:1.65;font-size:14px }
+    .warning { border-left:3px solid #e7ad45;padding:10px 12px;background:#33281766;border-radius:8px;color:#f0d7a8;font-size:13px;line-height:1.5 }
+    footer { text-align:center;color:#77849a;font-size:12px;padding:14px }
+    @media(max-width:380px){ .actions{grid-template-columns:1fr} }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="logo">JEI</div>
+    <h1>JEI ESTIRAR</h1>
+    <p class="sub">Vista previa de proporciones de pantalla</p>
+  </header>
+
+  <section class="card">
+    <h2>Vista previa</h2>
+    <div class="preview-wrap">
+      <div id="preview"><div><strong>JEI 3D</strong><small>Así cambia la proporción de esta vista</small></div></div>
+    </div>
+    <div class="control"><label for="ratio">Proporción horizontal</label><output id="value">100%</output></div>
+    <input id="ratio" type="range" min="70" max="140" value="100" step="1">
+    <div class="presets">
+      <button data-value="80">80%</button><button data-value="90">90%</button>
+      <button data-value="100">Normal</button><button data-value="110">110%</button>
+      <button data-value="120">120%</button><button data-value="130">130%</button>
+    </div>
+    <div class="actions">
+      <button class="primary" id="fullscreen">Ver pantalla completa</button>
+      <button id="reset">Restablecer</button>
+    </div>
+    <p class="note">Los controles modifican únicamente esta vista previa dentro de JEI ESTIRAR.</p>
+  </section>
+
+  <section class="card">
+    <h2>¿Quieres cambiar la pantalla del teléfono?</h2>
+    <ol class="steps">
+      <li>Abre los <b>Ajustes</b> de Android.</li>
+      <li>Busca <b>Pantalla</b> o <b>Tamaño de visualización</b>.</li>
+      <li>Revisa las opciones disponibles en tu teléfono y elige una configuración cómoda.</li>
+    </ol>
+    <div class="warning">Importante: una página web instalada no puede estirar otras aplicaciones ni cambiar la resolución global del teléfono. Para eso se necesita una función compatible del sistema Android.</div>
+  </section>
+  <footer>JEI ESTIRAR · Aplicación web instalable</footer>
+</main>
+<script>
+  const slider = document.querySelector('#ratio');
+  const preview = document.querySelector('#preview');
+  const value = document.querySelector('#value');
+  function update(v) {
+    slider.value = v;
+    value.textContent = v + '%';
+    preview.style.width = (Math.min(100, 300 * v / 100)) + '%';
+    preview.style.height = (190 * (2 - v / 100)) + 'px';
+  }
+  slider.addEventListener('input', e => update(e.target.value));
+  document.querySelectorAll('[data-value]').forEach(b => b.addEventListener('click', () => update(b.dataset.value)));
+  document.querySelector('#reset').addEventListener('click', () => update(100));
+  document.querySelector('#fullscreen').addEventListener('click', async () => {
+    try {
+      if (!document.fullscreenElement) await document.documentElement.requestFullscreen();
+      else await document.exitFullscreen();
+    } catch { alert('La pantalla completa no está disponible en este navegador.'); }
+  });
+  if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+</script>
+</body>
+</html>
